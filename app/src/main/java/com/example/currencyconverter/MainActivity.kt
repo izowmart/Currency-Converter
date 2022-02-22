@@ -5,33 +5,38 @@ import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.lifecycleScope
 import com.example.currencyconverter.databinding.ActivityMainBinding
 import com.example.currencyconverter.main.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 
+
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
+
     private lateinit var binding: ActivityMainBinding
-    private val viewModel: MainViewModel by viewModels()
+
+        private val viewModel: MainViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.btnConvert.setOnClickListener{
+        binding.btnConvert.setOnClickListener {
             viewModel.convert(
                 binding.etFrom.text.toString(),
                 binding.spFromCurrency.selectedItem.toString(),
-                binding.spToCurrency.selectedItem.toString()
+                binding.spToCurrency.selectedItem.toString(),
             )
         }
 
         lifecycleScope.launchWhenStarted {
-            viewModel.conversion.collect{ event ->
-                when(event){
+            viewModel.conversion.collect { event ->
+                when (event) {
                     is MainViewModel.CurrencyEvent.Success -> {
                         binding.progressBar.isVisible = false
                         binding.tvResult.setTextColor(Color.BLACK)
@@ -47,7 +52,6 @@ class MainActivity : AppCompatActivity() {
                     }
                     else -> Unit
                 }
-
             }
         }
     }
